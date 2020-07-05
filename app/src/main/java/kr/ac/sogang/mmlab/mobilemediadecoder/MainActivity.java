@@ -26,8 +26,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Example of a call to a native method
-        TextView tv = findViewById(R.id.sample_text);
-        tv.setText(stringFromJNI());
+        // TextView tv = findViewById(R.id.sample_text);
+        // tv.setText(stringFromJNI());
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!hasPermissions(PERMISSIONS)) {
                 requestPermissions(PERMISSIONS, PERMISSIONS_REQUEST_CODE);
