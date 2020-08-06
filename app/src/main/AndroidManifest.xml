@@ -1,24 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.ac.sogang.mmlab.mobilemediadecoder">
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    package="kr.ac.sogang">
+
+    <!-- To adjust Media Volume by swiping -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- To Stream Video -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- To Play local files + media picker -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- To download files (auto update) -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- To install updates (this will still show a prompt!) -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
-        android:requestLegacyExternalStorage="true"
+        android:name="kr.ac.sogang.mmlab.AndroidVideoPlayer.AVPApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme.Light"
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="q">
+        <!-- usesCleartextTraffic: allow traffic over http, since not all streams will be via https -->
+        <!-- requestLegacyExternalStorage: allow getting media in storage on android Q+ -->
+
+        <!-- file provider for app updates -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <!-- Media Picker / future main -->
+        <activity
+            android:name=".mmlab.AndroidVideoPlayer.ui.mediapicker.MediaPickerActivity"
+            android:label="@string/app_name" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".mmlab.AndroidVideoPlayer.ui.AppSettingsActivity"
+            android:label="@string/settings_root_title" />
+
+        <!-- Video Test Activity for Debugging -->
+        <activity
+            android:name=".mmlab.AndroidVideoPlayer.ui.PlayerDebugActivity"
+            android:exported="true" />
+
+        <!-- the crash screen -->
+        <activity
+            android:name=".mmlab.AndroidVideoPlayer.ui.CrashScreenActivity"
+            android:label="@string/app_name" />
+
+        <!-- Playback Activity (only started internally using LaunchActivity -->
+        <activity
+            android:name=".mmlab.AndroidVideoPlayer.ui.playback.PlaybackActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:label="@string/app_name"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true" />
+
+        <!-- Launch Activity (Splash Screen -->
+        <activity
+            android:name=".mmlab.AndroidVideoPlayer.ui.LaunchActivity"
+            android:label="@string/app_name">
+
+            <!-- launch media picker -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-    </application>
 
+            <!-- share with AndroidVideoPlayer -->
+            <intent-filter android:label="@string/app_open_with">
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <!-- links -->
+                <data android:mimeType="text/plain" />
+
+                <!-- audio + video -->
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+
+            <!-- by file extension -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="*" />
+
+                <!-- any -->
+                <!-- <data android:pathPattern=".*\\.*" /> -->
+
+
+                <!-- mp4 / fmp4 -->
+                <data android:pathPattern=".*\\.mp4" />
+                <data android:pathPattern=".*\\.m4v" />
+                <data android:pathPattern=".*\\.m4a" />
+
+                <!-- mpeg-ts / mpeg-ps -->
+                <data android:pathPattern=".*\\.mpeg" />
+                <data android:pathPattern=".*\\.mpeg1" />
+                <data android:pathPattern=".*\\.mpeg2" />
+                <data android:pathPattern=".*\\.mpeg3" />
+                <data android:pathPattern=".*\\.mpeg4" />
+
+                <!-- webm -->
+                <data android:pathPattern=".*\\.webm" />
+
+                <!-- matroska -->
+                <data android:pathPattern=".*\\.mkv" />
+                <data android:pathPattern=".*\\.mka" />
+
+                <!-- amr -->
+                <data android:pathPattern=".*\\.amr" />
+
+                <!-- adts(aac) -->
+                <data android:pathPattern=".*\\.aac" />
+
+                <!-- ogg -->
+                <data android:pathPattern=".*\\.ogg" />
+                <data android:pathPattern=".*\\.ogv" />
+                <data android:pathPattern=".*\\.oga" />
+
+                <!-- wav -->
+                <data android:pathPattern=".*\\.wav" />
+
+                <!-- mp3 -->
+                <data android:pathPattern=".*\\.mp3" />
+
+                <!-- flv -->
+                <data android:pathPattern=".*\\.flv" />
+                <data android:pathPattern=".*\\.f4v" />
+
+                <!-- 3gp -->
+                <data android:pathPattern=".*\\.3gp" />
+                <data android:pathPattern=".*\\.3g2" />
+                <data android:pathPattern=".*\\.3gpp" />
+
+                <!-- dash manifests -->
+                <data android:pathPattern=".*\\.mpd" />
+
+                <!-- hls manifests -->
+                <data android:pathPattern=".*\\.m3u8" />
+
+                <!-- smooth streaming manifests -->
+                <data android:pathPattern=".*\\.ismc" />
+            </intent-filter>
+
+            <!-- by mimetype -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="*" />
+
+                <!-- any -->
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+                <!-- <data android:mimeType="application/*"/> -->
+
+
+                <!-- mp4 -->
+                <data android:mimeType="video/mp4" />
+                <data android:mimeType="audio/mp4" />
+                <data android:mimeType="application/mp4" />
+
+                <!-- fmp4 -->
+                <data android:mimeType="video/x-extension-mp4" />
+                <data android:mimeType="audio/x-extension-mp4" />
+                <data android:mimeType="application/x-extension-mp4" />
+
+                <!-- mpeg-ts / mpeg-ps -->
+                <data android:mimeType="video/mpeg*" />
+                <data android:mimeType="audio/mpeg*" />
+                <data android:mimeType="application/mpeg*" />
+                <data android:mimeType="video/mpeg1" />
+                <data android:mimeType="audio/mpeg1" />
+                <data android:mimeType="application/mpeg1" />
+                <data android:mimeType="video/mpeg2" />
+                <data android:mimeType="audio/mpeg2" />
+                <data android:mimeType="application/mpeg2" />
+                <data android:mimeType="video/mpeg3" />
+                <data android:mimeType="audio/mpeg3" />
+                <data android:mimeType="application/mpeg3" />
+                <data android:mimeType="video/mpeg4" />
+                <data android:mimeType="audio/mpeg4" />
+                <data android:mimeType="application/mpeg4" />
+
+                <!-- webm -->
+                <data android:mimeType="video/webm" />
+                <data android:mimeType="audio/webm" />
+                <data android:mimeType="application/webm" />
+
+                <!-- matroska -->
+                <data android:mimeType="video/x-matroska" />
+                <data android:mimeType="audio/x-matroska" />
+                <data android:mimeType="application/x-matroska" />
+
+                <!-- amr -->
+                <data android:mimeType="audio/amr" />
+                <data android:mimeType="application/amr" />
+
+                <!-- adts(aac) -->
+                <data android:mimeType="audio/aac" />
+                <data android:mimeType="application/aac" />
+                <data android:mimeType="audio/aac-adts" />
+                <data android:mimeType="application/aac-adts" />
+
+                <!-- ogg -->
+                <data android:mimeType="video/ogg" />
+                <data android:mimeType="audio/ogg" />
+                <data android:mimeType="application/ogg" />
+
+                <!-- wav -->
+                <data android:mimeType="audio/wav" />
+                <data android:mimeType="application/wav" />
+                <data android:mimeType="audio/x-wav" />
+                <data android:mimeType="application/x-wav" />
+
+                <!-- mp3 -->
+                <data android:mimeType="audio/mp3" />
+                <data android:mimeType="application/mp3" />
+
+                <!-- flv -->
+                <data android:mimeType="video/x-flv" />
+                <data android:mimeType="application/x-flv" />
+
+                <!-- 3gp -->
+                <data android:mimeType="video/3gpp" />
+                <data android:mimeType="audio/3gpp" />
+                <data android:mimeType="application/3gpp" />
+                <data android:mimeType="video/3gpp2" />
+                <data android:mimeType="audio/3gpp2" />
+                <data android:mimeType="application/3gpp2" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".mmlab.AndroidVideoPlayer.ui.update.UpdateActivity" />
+
+        <!-- video playback service -->
+        <service android:name=".mmlab.AndroidVideoPlayer.feature.playback.VideoPlaybackService" />
+    </application>
 </manifest>

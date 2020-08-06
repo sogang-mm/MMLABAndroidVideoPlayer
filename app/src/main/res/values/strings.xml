@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">MobileMediaDecoder</string>
+    <string name="app_name">AndroidVideoPlayer</string>
+    <string name="app_open_with">Play with AndroidVideoPlayer</string>
+
+    <!-- urls to AndroidVideoPlayer pages -->
+    <string name="app_github_url" translatable="false">https://github.com/sogang-mm/AndroidVideoPlayer</string>
+    <string name="app_AndroidVideoPlayer_github_url" translatable="false">https://github.com/shadow578/AndroidVideoPlayer</string>
 </resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Quick Settings Button Attributes -->
+    <declare-styleable name="ControlQuickSettingsButton">
+        <attr name="text" format="string" />
+        <attr name="textIconPadding" format="dimension" />
+
+        <attr name="backgroundTint" format="color" />
+        <attr name="textColor" format="color" />
+        <attr name="iconTint" format="color" />
+
+        <attr name="icon" format="reference" />
+        <attr name="iconMinWidth" format="dimension" />
+    </declare-styleable>
+
+    <!-- Circle Ripple Animation View Attributes -->
+    <declare-styleable name="CircleRippleAnimationView">
+        <attr name="arcColor" format="color"/>
+        <attr name="rippleColor" format="color"/>
+        <attr name="arcSize" format="dimension"/>
+        <attr name="rippleAnimationDuration" format="integer"/>
+        <attr name="enableRippleFadeAnimation" format="boolean"/>
+        <attr name="rippleFadeAnimationDuration" format="integer"/>
+    </declare-styleable>
+
+    <!-- Double Tap Seek Overlay -->
+    <declare-styleable name="DoubleTapSeekOverlay">
+        <attr name="enableSeekAmountStacking" format="boolean"/>
+        <attr name="seekAnimationDuration" format="integer"/>
+        <attr name="enableTextFadeAnimation" format="boolean"/>
+        <attr name="textFadeAnimationDuration" format="integer"/>
+    </declare-styleable>
+
+    <!-- TapToHide Player Control View -->
+    <declare-styleable name="TapToHidePlayerControlView">
+        <attr name="autoHideTimeout" format="integer"/>
+    </declare-styleable>
+</resources>
