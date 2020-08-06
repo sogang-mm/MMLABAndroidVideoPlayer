@@ -2,43 +2,66 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.3"
-
+    buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "kr.ac.sogang.mmlab.mobilemediadecoder"
-        minSdkVersion 16
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        applicationId "kr.ac.sogang.mmlab.androidvideoplayer"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                cppFlags "-std=c++14"
-            }
+        minSdkVersion 23
+        targetSdkVersion 29
+
+        versionCode gitVersioner.versionCode
+        versionName gitVersioner.versionName
+
+        buildConfigField "String", "UPDATE_VENDOR", '"shadow578"'
+        buildConfigField "String", "UPDATE_REPO", '"AndroidVideoPlayer"'
+        buildConfigField "String", "UPDATE_VERSION_FORMAT", '"^v(\\\\d{3,})$"'
+
+        vectorDrawables.useSupportLibrary = true
+
+        setProperty("archivesBaseName", "AndroidVideoPlayer-$versionName")
+    }
+    flavorDimensions "releasePlatform"
+    productFlavors {
+        github {
+            //enable automatic update checks on builds for github
+            buildConfigField "Boolean", "ENABLE_SELF_UPDATE", "true"
+        }
+        fdroid {
+            //no auto- update checks for fdroid (this is part of their inclusion policy)
+            isDefault true
+            buildConfigField "Boolean", "ENABLE_SELF_UPDATE", "false"
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    externalNativeBuild {
-        cmake {
-            path "src/main/cpp/CMakeLists.txt"
-            version "3.10.2"
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    tasks.withType(JavaCompile) {
+        configure(options) {
+            options.encoding = 'UTF-8'
+            options.debug = true
+            options.failOnError = true
+            options.warnings = true
+            options.compilerArgs << '-Xlint:deprecation'
         }
     }
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.pnikosis:materialish-progress:1.7'
+    implementation 'mobi.upod:time-duration-picker:1.1.3'
+    implementation 'com.google.android.exoplayer:exoplayer:2.10.4'
+    implementation 'com.github.MasayukiSuda:ExoPlayerFilter:v0.2.4'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-core:1.0.15'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-native:1.0.15'
 }

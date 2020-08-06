@@ -1,10 +1,58 @@
 <resources>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- stupid material dialogs need this -->
+        <item name="colorSurface">@color/app_background_elevated</item>
     </style>
 
+    <!-- shared style of all player control buttons (play/pause/replay/fast forward/ rewind) -->
+    <style name="PlayerControlButton">
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">@color/player_controls_center_buttons</item>
+    </style>
+
+    <!-- shared style of all screen rotation buttons (in playback controls) -->
+    <style name="ScreenRotationButton">
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">@color/player_controls_screen_rotation_buttons</item>
+    </style>
+
+    <!-- shared style of all Quick Settings buttons -->
+    <style name="QuickSettingsButton">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:onClick">playback_OnClick</item>
+        <item name="iconMinWidth">5dp</item>
+        <item name="backgroundTint">@color/quick_settings_item_background</item>
+        <item name="iconTint">@color/quick_settings_item_tint_default</item>
+        <item name="textColor">@color/quick_settings_item_text</item>
+        <item name="textIconPadding">10dp</item>
+    </style>
+
+    <!-- shared style of all buttons in more fragment -->
+    <style name="MoreActionButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:drawablePadding">15dp</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
 </resources>
