@@ -24,6 +24,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -179,13 +180,13 @@ public class LaunchActivity extends AppCompatActivity
         Uri playbackUrl = parsePlaybackUrl(callingIntent);
         if (playbackUrl == null) return false;
         else {
-            String videoPath = playbackUrl.getPath();
             FFmpegWrapper ffmpegWrapper = new FFmpegWrapper();
-            ffmpegWrapper.initializeVideo(playbackUrl.toString(), 0);
+            ffmpegWrapper.initializeVideo(getVideoURL(playbackUrl), 0);
             ffmpegWrapper.start();
         }
 
         String title = parseTitle(playbackUrl, callingIntent);
+        Logging.logE("videoName", title);
         if (title.isEmpty()) return false;
 
         Intent launchIntent = new Intent(this, PlaybackActivity.class);
@@ -351,5 +352,25 @@ public class LaunchActivity extends AppCompatActivity
         }
 
         return title;
+    }
+
+    public String getVideoURL(Uri videoURL) {
+        if (videoURL.toString().contains("http")) {
+            return videoURL.toString();
+        } else if(videoURL.toString().contains("storage")) {
+            return videoURL.getPath();
+        }
+        else {
+            return getPathFromUri(videoURL);
+        }
+    }
+    public String getPathFromUri(Uri uri){
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null );
+        cursor.moveToNext();
+        String path = cursor.getString( cursor.getColumnIndex( "_data" ) );
+        cursor.close();
+
+        return path;
+
     }
 }
