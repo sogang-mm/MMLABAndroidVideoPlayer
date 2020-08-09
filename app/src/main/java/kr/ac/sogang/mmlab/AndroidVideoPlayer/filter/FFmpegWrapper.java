@@ -45,6 +45,7 @@ public class FFmpegWrapper extends Thread{
 
     public boolean initializeVideo(String videoURL, int extractFps) {
         String videoName = getVideoName(videoURL);
+        Logging.logE("videoURL:" + videoURL);
         mImageNumber = 1;
 
         mSaveFile = new SaveFile();
