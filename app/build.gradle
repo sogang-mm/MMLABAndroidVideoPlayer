@@ -52,16 +52,8 @@ android {
             options.compilerArgs << '-Xlint:deprecation'
         }
     }
-
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ['/src/main/jniLibs']
-//        }
-//    }
     packagingOptions {
         exclude 'META-INF/services/javax.annotation.process.Precessor'
-        pickFirst 'META-INF/maven/org.btyedeco.javacpp-presets/opencv/pom.properties'
-        pickFirst 'META-INF/maven/org.btyedeco.javacpp-presets/opencv/pom.xml'
         pickFirst 'META-INF/maven/org.btyedeco.javacpp-presets/ffmpeg/pom.properties'
         pickFirst 'META-INF/maven/org.btyedeco.javacpp-presets/ffmpeg/pom.xml'
     }
@@ -84,6 +76,5 @@ dependencies {
 
     implementation files('src/main/jniLibs/javacpp.jar')
     implementation files('src/main/jniLibs/javacv.jar')
-    implementation files('src/main/jniLibs/opencv.jar')
     implementation files('src/main/jniLibs/ffmpeg.jar')
 }
