@@ -181,7 +181,7 @@ public class LaunchActivity extends AppCompatActivity
         if (playbackUrl == null) return false;
         else {
             FFmpegWrapper ffmpegWrapper = new FFmpegWrapper();
-            ffmpegWrapper.initializeVideo(getVideoURL(playbackUrl), 0);
+            ffmpegWrapper.initializeVideo(getVideoURL(playbackUrl), 1);
             ffmpegWrapper.start();
         }
 
