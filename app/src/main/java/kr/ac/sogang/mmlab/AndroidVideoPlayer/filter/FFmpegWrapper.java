@@ -2,7 +2,6 @@ package kr.ac.sogang.mmlab.AndroidVideoPlayer.filter;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
@@ -26,16 +25,20 @@ public class FFmpegWrapper extends Thread{
     private int mFrameWidth;
     private int mFrameHeight;
     private int mExtractFps;
+    private long mCurrentTime;
 
     private double mVideoFps;
     private double mVideoDuration;
-
     private AndroidFrameConverter mAndroidFrameConverter;
     private SaveFile mSaveFile;
     
     private Date mDate;
     private DirFileUtil mDirFileUtil;
     private int mImageNumber;
+
+    private long mTime;
+    private int mFramecount;
+
 
     boolean isKeepGoing;
 
@@ -45,9 +48,7 @@ public class FFmpegWrapper extends Thread{
 
     public boolean initializeVideo(String videoURL, int extractFps) {
         String videoName = getVideoName(videoURL);
-        Logging.logE("videoURL:" + videoURL);
         mImageNumber = 1;
-
         mSaveFile = new SaveFile();
 
         mVideoPath = videoURL;
@@ -76,9 +77,10 @@ public class FFmpegWrapper extends Thread{
         Logging.logD("AndroidFrameConverter is loaded");
 
         mVideoFps = mFFmpegFrameGrabber.getFrameRate();
-        /*
         mVideoLength = mFFmpegFrameGrabber.getLengthInVideoFrames();
         mVideoDuration = mFFmpegFrameGrabber.getLengthInTime() / 1000.0D;
+
+        /*
         mFrameWidth = mFFmpegFrameGrabber.getImageWidth();
         mFrameHeight = mFFmpegFrameGrabber.getImageHeight();
         */
@@ -93,16 +95,31 @@ public class FFmpegWrapper extends Thread{
         Bitmap bitmapFrame;
         Frame frame;
         try {
+            mCurrentTime = mFFmpegFrameGrabber.getTimestamp() + mExtractFps * 1000000L;
+
+            if (mVideoDuration <= mCurrentTime/1000.0D)
+                return false;
             frame = mFFmpegFrameGrabber.grabFrame(false, true, true, false);
+
+            long startTime = System.currentTimeMillis();
+            bitmapFrame = mAndroidFrameConverter.convert(frame);
+            mSaveFile.saveImage(bitmapFrame, mSaveFrameDirPath, String.format("%06d", mImageNumber++));
+            long endTime = System.currentTimeMillis();
+            mTime += (endTime - startTime);
+            mFramecount++;
+
+            Logging.logE("gettime: " + mVideoDuration
+                    + "\t" + mCurrentTime / 1000.0D
+                    + "\t" + mFFmpegFrameGrabber.getTimestamp() / 1000.0D
+                    + "\t" + mExtractFps
+                    + "\t" + (int) Math.round(mVideoFps)
+            );
+            mFFmpegFrameGrabber.setTimestamp(mCurrentTime);
         } catch(FrameGrabber.Exception e) {
             e.printStackTrace();
             return false;
         }
 
-        if ((mFFmpegFrameGrabber.getFrameNumber() % (Math.round(mVideoFps) * mExtractFps)) == 1) {
-            bitmapFrame = mAndroidFrameConverter.convert(frame);
-            mSaveFile.saveImage(bitmapFrame, mSaveFrameDirPath, String.format("%06d", mImageNumber++));
-        }
         return true;
     }
     
@@ -118,9 +135,25 @@ public class FFmpegWrapper extends Thread{
 
     public void run() {
         isKeepGoing = true;
-
+        Logging.logD("Extract frame info: \n"
+                + "\tVideo fps: " + mVideoFps + "\n"
+                + "\tVideo length: " + mVideoLength + "\n"
+                + "\tExtract fps" + mExtractFps + "\n"
+        );
+        long startTime = System.currentTimeMillis();
         while (isKeepGoing) {
             isKeepGoing = saveFrameToBitmap();
+        }
+        long endTime = System.currentTimeMillis();
+        long time = endTime - startTime;
+        Logging.logD("Extract frame time: " + time/1000 + "." + time%1000);
+        double saveFrameTime = (double)mTime/mFramecount;
+        Logging.logD("Save frame time: " + saveFrameTime);
+
+        try {
+            mFFmpegFrameGrabber.stop();
+        } catch (FrameGrabber.Exception e) {
+            e.printStackTrace();
         }
     }
     public void setRunningState(boolean state) {
