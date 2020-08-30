@@ -200,5 +200,9 @@ public final class ConfigKeys
      */
     public static final String KEY_IGNORE_UPDATE_VERSION = "IGNORE_UPDATE_VERSION";
 
+    /**
+     * FFmpeg
+     */
+    public static final String KEY_FFMPEG_DECODE_FPS = "FFMPEG_DECODE_FPS";
     //endregion
 }

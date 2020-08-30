@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_ffmpeg_title" />
+
+    <EditTextPreference
+        android:defaultValue="@integer/DECODE_FPS"
+        android:key="FFMPEG_DECODE_FPS"
+        android:numeric="integer"
+        android:summary="@string/settings_ffmpeg_decode_fps_summary"
+        android:title="@string/settings_ffmpeg_decode_fps_title" />
+</PreferenceScreen>

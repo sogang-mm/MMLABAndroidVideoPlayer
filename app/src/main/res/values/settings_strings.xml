@@ -25,6 +25,11 @@
     <string name="settings_general_battery_warn_thresh_title">Battery low Threshold</string>
     <string name="settings_general_battery_warn_thresh_summary">Threshold below which the battery warning is shown</string>
 
+    <!-- Settings: FFmpeg -->
+    <string name="settings_ffmpeg_title">FFmpeg</string>
+    <string name="settings_ffmpeg_decode_fps_title">FFmpeg Decode FPS</string>
+    <string name="settings_ffmpeg_decode_fps_summary">Number of frames to extract per second when decoding a video.</string>
+
     <!-- Settings: swipe -->
     <string name="settings_swipe_title">Gestures</string>
     <string name="settings_swipe_enable_title">Enable Swipe Gestures</string>

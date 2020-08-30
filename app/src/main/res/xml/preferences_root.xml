@@ -16,6 +16,11 @@
         android:title="@string/settings_player_title" />
 
     <Preference
+        android:fragment="kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.AppSettingsActivity$PreferencesFFmpegFragment"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/settings_ffmpeg_title" />
+
+    <Preference
         android:fragment="kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.AppSettingsActivity$PreferencesAnime4KConfigFragment"
         android:icon="@drawable/ic_a4k_black_48dp"
         android:title="@string/settings_a4k_title" />
