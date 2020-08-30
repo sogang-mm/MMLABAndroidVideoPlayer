@@ -9,6 +9,7 @@
     <bool name="DEF_PERSIST_VOLUME_EN">true</bool>
     <bool name="DEF_BATTERY_WARN_ENABLE">true</bool>
     <integer name="DEF_BATTERY_WARN_THRESHOLD">15</integer>
+    <integer name="DECODE_FPS">1</integer>
 
     <!-- swipe settings -->
     <bool name="DEF_SWIPE_GESTURES_EN">true</bool>
@@ -45,4 +46,7 @@
     <integer name="DEF_LAST_UPDATE_CHECK">0</integer>
     <bool name="DEF_UPDATE_AVAILABLE">false</bool>
     <string name="DEF_IGNORE_UPDATE_VERSION">0</string>
+
+    <!-- FFmpeg -->
+    <integer name="DEF_FFMPEG_DECODE_FPS">1</integer>
 </resources>

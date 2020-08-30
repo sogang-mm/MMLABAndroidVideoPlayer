@@ -111,6 +111,15 @@ public class AppSettingsActivity extends AppCompatActivity implements
             setPreferencesFromResource(R.xml.preferences_general, rootKey);
         }
     }
+    public static class PreferencesFFmpegFragment extends PreferenceFragmentCompat
+    {
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey)
+        {
+            setPreferencesFromResource(R.xml.preferences_ffmpeg, rootKey);
+        }
+    }
 
     public static class PreferencesSwipeFragment extends PreferenceFragmentCompat
     {
