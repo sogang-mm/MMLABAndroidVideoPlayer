@@ -179,9 +179,10 @@ public class LaunchActivity extends AppCompatActivity
 
         Uri playbackUrl = parsePlaybackUrl(callingIntent);
         if (playbackUrl == null) return false;
+
         else {
             FFmpegWrapper ffmpegWrapper = new FFmpegWrapper();
-            ffmpegWrapper.initializeVideo(getVideoURL(playbackUrl), 1);
+            ffmpegWrapper.initializeVideo(getVideoURL(playbackUrl), ConfigUtil.getConfigInt(getApplicationContext(), ConfigKeys.KEY_FFMPEG_DECODE_FPS, R.integer.DEF_FFMPEG_DECODE_FPS));
             ffmpegWrapper.start();
         }
 
