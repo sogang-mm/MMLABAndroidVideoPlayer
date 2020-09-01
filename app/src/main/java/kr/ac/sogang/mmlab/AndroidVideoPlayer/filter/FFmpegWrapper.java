@@ -1,161 +1,153 @@
 package kr.ac.sogang.mmlab.AndroidVideoPlayer.filter;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
-import org.bytedeco.javacv.AndroidFrameConverter;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-import kr.ac.sogang.R;
-import kr.ac.sogang.mmlab.AndroidVideoPlayer.util.ConfigKeys;
-import kr.ac.sogang.mmlab.AndroidVideoPlayer.util.ConfigUtil;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.util.Logging;
+
+import com.arthenica.mobileffmpeg.Config;
+import com.arthenica.mobileffmpeg.FFmpeg;
+import static com.arthenica.mobileffmpeg.Config.RETURN_CODE_CANCEL;
+import static com.arthenica.mobileffmpeg.Config.RETURN_CODE_SUCCESS;
 
 
 public class FFmpegWrapper extends Thread{
-    private FFmpegFrameGrabber mFFmpegFrameGrabber;
+    private String TAG = "FFmpegWrapper";
+    private String mVideoURL;
+    private String mVideoName;
 
-    private String mVideoPath;
-
-    private int mVideoLength;
-
-    private int mExtractFps;
-    private long mCurrentTime;
-
-    private double mVideoFps;
-    private double mVideoDuration;
-    private AndroidFrameConverter mAndroidFrameConverter;
-
-    // -- For save frames
-    // private int mFrameWidth;
-    // private int mFrameHeight;
-    // private String mSaveFrameDirPath;
-    // private SaveFile mSaveFile;
-    // private int mImageNumber;
-    // private Date mDate;
-    // private DirFileUtil mDirFileUtil;
-
-    private long mDecodeTime;
-    private long mInferTime;
-    private long mSeekTime;
-    private int mFramecount;
-
+    private List mFrameList;
+    int mInferTime;
+    int mFramecount;
     boolean isKeepGoing;
     private BaseModel model;
 
-    private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMdd");
-    private SimpleDateFormat mDecodeTimeFormat = new SimpleDateFormat("HHmmss", Locale.KOREA);
+    private double mExtractFps;
+
+    private String mSaveFrameDirPath;
+    private Date mDate;
+    private DirFileUtil mDirFileUtil;
+
+
 
     public boolean initializeVideo(String videoURL, int extractFps) {
+        mVideoName = getVideoName(videoURL);
+        mInferTime = 0;
+        mDate = new Date();
+        mDirFileUtil = new DirFileUtil();
+        mSaveFrameDirPath = mDirFileUtil.CreateSaveDir(mDate, mVideoName);
+        mVideoURL = videoURL;
 
-        // -- For save frames
-        // String videoName = getVideoName(videoURL);
-        // mImageNumber = 1;
-        // mSaveFile = new SaveFile();
+        Logging.logD("FFmpegWrapper - Parameter info: \n"
+                + "\tVideo URI: " + mVideoURL + "\n"
+                + "\tVideo name: " + mVideoName + "\n"
+        );
+        if(extractFps == 0) mExtractFps = 0;
+        else                mExtractFps = 1/(double)extractFps;
 
-        mVideoPath = videoURL;
-        mDecodeTime = 0;
-        mSeekTime = 0;
-
-        if (extractFps == 0) {
-            mExtractFps = 1;
+        // TODO: Check FFmpeg Load - mobile-ffmpeg
+        if (loadFFmpeg()) {
+            Logging.logD(TAG + "(" + Config.TAG + ")" + "- FFmpeg load completed successfully.");
         } else {
-            mExtractFps = extractFps;
+            Logging.logD(TAG + "(" + Config.TAG + ")" + "- FFmpeg load fail");
         }
 
-        try {
-            // -- For save frames
-            // mDate = new Date();
-            // mDirFileUtil = new DirFileUtil();
-            // mSaveFrameDirPath = mDirFileUtil.CreateSaveDir(mDate, videoName);
-
-            mFFmpegFrameGrabber = new FFmpegFrameGrabber(mVideoPath);
-            mFFmpegFrameGrabber.setOption( "hwaccel", "mediacodec");
-            mFFmpegFrameGrabber.setOption("skip_frame", "nokey");
-            Logging.logD("FFmpeg - option: " + mFFmpegFrameGrabber.getOptions().toString());
-            mFFmpegFrameGrabber.start();
-            Logging.logD("FFmpegFrameGrabber is loaded (" + mVideoPath + ")");
-        } catch (FrameGrabber.Exception e) {
-            Logging.logD("Video initialization is failed (" + mVideoPath + ")");
-            return false;
-        }
-
-
-        mAndroidFrameConverter  = new AndroidFrameConverter();
-        Logging.logD("AndroidFrameConverter is loaded");
-
-        mVideoFps = mFFmpegFrameGrabber.getFrameRate();
-        mVideoLength = mFFmpegFrameGrabber.getLengthInVideoFrames();
-        mVideoDuration = mFFmpegFrameGrabber.getLengthInTime() / 1000.0D;
-
+        // TODO: CNN Model Load
         model = new BaseModel();
-        /*
-        mFrameWidth = mFFmpegFrameGrabber.getImageWidth();
-        mFrameHeight = mFFmpegFrameGrabber.getImageHeight();
-        */
-
-        Logging.logD("Video initialization is succeeded");
+        Logging.logD(TAG + " - Video initialization is succeeded");
 
         return true;
     }
 
-    public boolean processFrame() {
-        Bitmap bitmapFrame;
-        long decodeStartTime = 0, decodeEndTime = 0,
-                seekStartTime = 0, seekEndTime = 0,
-                inferStartTime = 0, inferEndTime = 0,
-                decodeTime = 0, seekTime = 0, inferTime = 0;
+    private boolean loadFFmpeg() {
+        int rc = FFmpeg.execute("-version");
+
+        if (rc == RETURN_CODE_SUCCESS) {
+            Logging.logD(TAG + "(" + Config.TAG + ")"  + "- Command execution completed successfully.");
+        } else {
+            Logging.logE(TAG + "(" + Config.TAG + ")"  + "- " + String.format("Command execution failed with rc=%d and the output below.", rc));
+            Config.printLastCommandOutput(Log.INFO);
+            return false;
+        }
+        FFmpeg.cancel();
+
+        return true;
+    }
+
+    private boolean extractFramesFFmpeg() {
+        String options;
+        if (mExtractFps == 0) {
+            options = " -vsync 0 -frame_pts true ";
+        } else {
+            options = " -r " + mExtractFps + " ";
+        }
+        Logging.logD(TAG + "(" + Config.TAG + ")"  + "- Execution: ffmpeg -skip_frame nokey -i " + mVideoURL + options + "/%%06.jpg");
+
+        int rc = FFmpeg.execute(" -skip_frame nokey -i " + mVideoURL + options + mSaveFrameDirPath + "/%06d.jpg");
+
+        if (rc == RETURN_CODE_SUCCESS) {
+            Logging.logD(TAG + "(" + Config.TAG + ")"  + "- Command execution completed successfully.");
+        } else if (rc == RETURN_CODE_CANCEL) {
+            Logging.logD(TAG + "(" + Config.TAG + ")"  + "- Command execution cancelled by user.");
+            return false;
+        } else {
+            Logging.logD(TAG + "(" + Config.TAG + ")"  + String.format("- Command execution failed with rc=%d and the output below.", rc));
+            Config.printLastCommandOutput(Log.INFO);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean inferenceFrame(Bitmap bitmapFrame) {
+        long inferStartTime = 0, inferEndTime = 0, inferTime = 0;
         try {
-            mCurrentTime = mFFmpegFrameGrabber.getTimestamp() + mExtractFps * 1000000L;
-
-            if (mVideoDuration <= mCurrentTime/1000.0D)
-                return false;
-
-            decodeStartTime = System.currentTimeMillis();
-            bitmapFrame = mAndroidFrameConverter.convert(mFFmpegFrameGrabber.grabFrame(false, true, true, false));
-            // mSaveFile.saveImage(bitmapFrame, mSaveFrameDirPath, String.format("%06d", mImageNumber++));
-            decodeEndTime = System.currentTimeMillis();
-
-            // TODO:
+            mFramecount += 1;
+            // TODO: inference
             inferStartTime = System.currentTimeMillis();
             boolean ret = model.inference(bitmapFrame);
             inferEndTime = System.currentTimeMillis();
 
-            seekStartTime = System.currentTimeMillis();
-            mFFmpegFrameGrabber.setTimestamp(mCurrentTime);
-            seekEndTime = System.currentTimeMillis();
-
-            decodeTime = (decodeEndTime - decodeStartTime);
-            seekTime = (seekEndTime - seekStartTime);
             inferTime = (inferEndTime - inferStartTime);
-            mSeekTime += seekTime;
             mInferTime += inferTime;
-            mDecodeTime += decodeTime;
-
-            mFramecount++;
-
 
             if (mFramecount % 50 == 0) {
-                Logging.logD("FFmpeg - Decoded framecount: " + mFramecount +
-                        "  /\tDecode time: " + decodeTime/1000 + "." + decodeTime%1000 +
-                        "  /\tInference time: " + inferTime/1000 + "." + inferTime%1000 +
-                        "  /\tSeek time: " + seekTime/1000 + "." + seekTime%1000
+                Logging.logD(TAG + "(Infer) - inference framecount: " + mFramecount +
+                        "  /\tInference time: " + (double)(inferTime)/1000
                 );
             }
-
-            bitmapFrame = null;
-
-        } catch(FrameGrabber.Exception e) {
+        } catch(Exception e) {
+            Logging.logD(TAG + "(Infer) - inference fail");
             e.printStackTrace();
             return false;
         }
 
         return true;
+    }
+
+    private boolean getFrameList() {
+        try {
+            mFrameList = new ArrayList();
+            File saveFrameDir = new File(mSaveFrameDirPath);
+            File frameList[] = saveFrameDir.listFiles();
+
+            for (int i = 0; i < frameList.length; i++) {
+                mFrameList.add(frameList[i].getAbsolutePath());
+            }
+
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
     }
     
     private String getVideoName(String videoPath) {
@@ -168,44 +160,75 @@ public class FFmpegWrapper extends Thread{
         }
     }
 
+    private Bitmap getBitmapFromAsolutePath(String asolutePath) {
+        try {
+            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+            return BitmapFactory.decodeFile(asolutePath, bmOptions);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
     public void run() {
+        Bitmap bitmap;
+        boolean ret;
         isKeepGoing = true;
 
-        long startTime = System.currentTimeMillis();
-        while (isKeepGoing) {
-            isKeepGoing = processFrame();
+        long startDecodeTime, endDecodeTime,
+                startProcessTime, endProcessTime,
+                processTime, decodeTime;
+        double averageDecodeTime, averageInferTime;
+        startDecodeTime = System.currentTimeMillis();
+        ret = extractFramesFFmpeg();
+        if(ret) {
+            Logging.logD(TAG + "(FFmpeg) - Start extracting frames from video(" + mVideoName + ").");
         }
-        long endTime = System.currentTimeMillis();
-        long time = endTime - startTime;
+        endDecodeTime = System.currentTimeMillis();
+        decodeTime = endDecodeTime - startDecodeTime;
 
-        Logging.logD("FFmpeg - Video info: \n"
-                + "\tFPS: " + mVideoFps + "\n"
-                + "\t# of Frames: " + mVideoLength + "\n"
-                + "\tExtract fps" + mExtractFps + "\n"
-        );
 
-        double decodeTime = ((double)mDecodeTime/mFramecount)/1000;
-        double inferTime = ((double)mInferTime/mFramecount)/1000;
-        double seekTime = ((double)mSeekTime/mFramecount)/1000;
 
-        Logging.logD("FFmpeg - process frames info: \n"
+        startProcessTime = System.currentTimeMillis();
+        // TODO: Bitmap load from file path
+        if(getFrameList()) {
+            Logging.logD(TAG + "(FFmpeg) -  Frame list has been loaded successfully.(# of frame: " + mFrameList.size() + ")");
+        }
+
+        for(int i = 0; i < mFrameList.size(); i++) {
+            bitmap = getBitmapFromAsolutePath(mFrameList.get(i).toString());
+            if (bitmap != null) {
+                boolean retInfer = inferenceFrame(bitmap);
+            } else {
+                Logging.logD(TAG + "(Infer) -  bitmap is null.(# of frame: " + (i + 1) + ")");
+            }
+            bitmap = null;
+        }
+        endProcessTime = System.currentTimeMillis();
+        processTime = endProcessTime - startProcessTime;
+
+        averageDecodeTime = ((double)decodeTime/mFramecount)/1000;
+        averageInferTime = ((double)mInferTime/mFramecount)/1000;
+
+        Logging.logD(TAG + " \n- Processing result: \n"
                 + "\tCount of decoded frames:\t" + mFramecount + "\n"
-                + "\tTotal decodeing time:\t" + + time/1000 + "." + time%1000 + "sec" + "\n"
-                + "\tOne frame total time(decode + seek time):\t" + (decodeTime + inferTime + seekTime) + "\n"
-                + "\tAverage Decode time:\t" + decodeTime + "\n"
-                + "\tAverage Inference time:\t" + inferTime + "\n"
-                + "\tAverage Seek time:\t" + seekTime + "\n"
+                + "\tExtract fps:\t" + mExtractFps + "\n"
+                + "\tTotal processing time(decode + inference):\t" +  + (double)(decodeTime + processTime)/1000 + "\n"
+                + "\tOne frame total time(decode + inference):\t" + ((double)(decodeTime + processTime)/mFramecount)/1000 + "\n"
+
+                + "\t-- Decoding info --\n"
+                + "\tTotal decodeing time:\t" + (double)(decodeTime)/1000+ "\n"
+                + "\tAverage Decode time:\t" + (double)(averageDecodeTime) + "\n"
+
+                + "\t-- Load bitmap from absolute path --\n"
+                + "\tLoading bitmap from absolute path time:\t" + (double)(processTime - mInferTime)/1000 + "\n"
+
+                + "\t-- Inference Info --\n"
+                + "\tTotal inference time:\t" + (double)(mInferTime)/1000 + "\n"
+                + "\tAverage inference time:\t" + (double)(averageInferTime) + "\n"
         );
-
-        try {
-            mFFmpegFrameGrabber.stop();
-        } catch (FrameGrabber.Exception e) {
-            e.printStackTrace();
-        }
     }
-    public void setRunningState(boolean state) {
-        isKeepGoing = state;
+    public void stopProcess() {
+        FFmpeg.cancel();
+        isKeepGoing = false;
     }
-
-
 }
