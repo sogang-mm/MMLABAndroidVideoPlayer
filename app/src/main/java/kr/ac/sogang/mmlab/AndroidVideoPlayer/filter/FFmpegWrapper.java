@@ -3,6 +3,7 @@ package kr.ac.sogang.mmlab.AndroidVideoPlayer.filter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import kr.ac.sogang.mmlab.AndroidVideoPlayer.model.PytorchClassifier;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.util.Logging;
 
 import com.arthenica.mobileffmpeg.Config;
@@ -63,8 +65,13 @@ public class FFmpegWrapper extends Thread{
         }
 
         // TODO: CNN Model Load
-        model = new BaseModel();
-        Logging.logD(TAG + " - Video initialization is succeeded");
+        //model = new BaseModel();
+        String modelPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/models/mobilenet_v2_imagenet.pt";
+        long s = System.currentTimeMillis();
+        model = new PytorchClassifier(modelPath);
+        long e = System.currentTimeMillis();
+        float modelLoadingTime = (e - s) / 1000f;
+        Logging.logD(TAG + " - Video initialization is succeeded : " + modelLoadingTime);
 
         return true;
     }
@@ -225,6 +232,8 @@ public class FFmpegWrapper extends Thread{
                 + "\t-- Inference Info --\n"
                 + "\tTotal inference time:\t" + (double)(mInferTime)/1000 + "\n"
                 + "\tAverage inference time:\t" + (double)(averageInferTime) + "\n"
+                + "\tAvagage preprocessing time\t" + (double)(model.getAvgPreprocessTime()) + "\n"
+                + "\tAvagage CNN inference time\t" + (double)(model.getAvgModelTime()) + "\n"
         );
     }
     public void stopProcess() {
