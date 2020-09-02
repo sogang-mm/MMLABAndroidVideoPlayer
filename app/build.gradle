@@ -52,6 +52,9 @@ android {
             options.compilerArgs << '-Xlint:deprecation'
         }
     }
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
 }
 
 dependencies {
@@ -67,4 +70,8 @@ dependencies {
     implementation 'com.github.MasayukiSuda:ExoPlayerFilter:v0.2.4'
 
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
+
+    //pytorch
+    implementation 'org.pytorch:pytorch_android:1.6.0'
+    implementation 'org.pytorch:pytorch_android_torchvision:1.6.0'
 }
