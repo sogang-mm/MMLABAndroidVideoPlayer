@@ -6,7 +6,6 @@
     <EditTextPreference
         android:defaultValue="@integer/DECODE_FPS"
         android:key="FFMPEG_DECODE_FPS"
-        android:numeric="integer"
         android:summary="@string/settings_ffmpeg_decode_fps_summary"
         android:title="@string/settings_ffmpeg_decode_fps_title" />
 </PreferenceScreen>

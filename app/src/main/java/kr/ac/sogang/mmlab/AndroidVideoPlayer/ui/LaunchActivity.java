@@ -39,6 +39,7 @@ public class LaunchActivity extends AppCompatActivity
     private SharedPreferences appPreferences;
 
     private Handler splashHandler = new Handler();
+    private FFmpegWrapper ffmpegWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -179,12 +180,6 @@ public class LaunchActivity extends AppCompatActivity
 
         Uri playbackUrl = parsePlaybackUrl(callingIntent);
         if (playbackUrl == null) return false;
-
-        else {
-            FFmpegWrapper ffmpegWrapper = new FFmpegWrapper();
-            ffmpegWrapper.initializeVideo(getVideoURL(playbackUrl), ConfigUtil.getConfigInt(getApplicationContext(), ConfigKeys.KEY_FFMPEG_DECODE_FPS, R.integer.DEF_FFMPEG_DECODE_FPS));
-            ffmpegWrapper.start();
-        }
 
         String title = parseTitle(playbackUrl, callingIntent);
         Logging.logE("videoName", title);
@@ -355,6 +350,14 @@ public class LaunchActivity extends AppCompatActivity
         return title;
     }
 
+    @Override
+    protected void onDestroy() {
+        if (ffmpegWrapper != null) {
+            ffmpegWrapper.stopProcess();
+        }
+        super.onDestroy();
+    }
+
     public String getVideoURL(Uri videoURL) {
         if (videoURL.toString().contains("http")) {
             return videoURL.toString();
@@ -372,6 +375,5 @@ public class LaunchActivity extends AppCompatActivity
         cursor.close();
 
         return path;
-
     }
 }

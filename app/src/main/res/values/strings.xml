@@ -5,4 +5,7 @@
     <!-- urls to AndroidVideoPlayer pages -->
     <string name="app_github_url" translatable="false">https://github.com/sogang-mm/AndroidVideoPlayer</string>
     <string name="app_AndroidVideoPlayer_github_url" translatable="false">https://github.com/shadow578/AndroidVideoPlayer</string>
+
+    <!-- API URLs -->
+    <string name="image_search_url">http://mlcupid.sogang.ac.kr:8777/api/query/</string>
 </resources>

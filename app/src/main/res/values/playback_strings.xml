@@ -27,6 +27,7 @@
     <string name="quick_settings_loop">Loop</string>
     <string name="quick_settings_subs">Subtitles</string>
     <string name="quick_settings_app_settings">Global Settings</string>
+    <string name="quick_video_copy_detection_result">Detection result</string>
     <string name="quick_settings_skip_intro">Skip Opening</string>
     <string name="quick_settings_anime4k">Anime4K</string>
 
