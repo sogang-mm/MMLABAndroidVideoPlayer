@@ -2,7 +2,9 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
+    useLibrary 'org.apache.http.legacy'
+
     defaultConfig {
         applicationId "kr.ac.sogang.mmlab.androidvideoplayer"
 
@@ -54,6 +56,15 @@ android {
     }
     packagingOptions {
         pickFirst '**/*.so'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
     }
 }
 
@@ -70,6 +81,11 @@ dependencies {
     implementation 'com.github.MasayukiSuda:ExoPlayerFilter:v0.2.4'
 
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
+
+    //http request
+    implementation 'org.apache.httpcomponents:httpmime:4.3.6'
+    //noinspection DuplicatePlatformClasses
+    implementation 'org.apache.httpcomponents:httpclient:4.5'
 
     //pytorch
     implementation 'org.pytorch:pytorch_android:1.6.0'

@@ -82,6 +82,14 @@
                 app:text="@string/quick_settings_skip_intro"
                 tools:visibility="visible"/>
 
+            <!-- video copy detection result -->
+            <kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.playback.views.ControlQuickSettingsButton
+                android:id="@+id/qs_btn_detection_result"
+                style="@style/QuickSettingsButton"
+                app:icon="@drawable/ic_settings_black_24dp"
+                app:text="@string/quick_video_copy_detection_result"
+                tools:visibility="visible"/>
+
             <!-- settings -->
             <kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.playback.views.ControlQuickSettingsButton
                 android:id="@+id/qs_btn_app_settings"
