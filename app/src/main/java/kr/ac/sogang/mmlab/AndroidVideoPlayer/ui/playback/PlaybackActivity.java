@@ -822,6 +822,9 @@ public class PlaybackActivity extends AppCompatActivity implements AVPApp.ICrash
                     startActivity(searchIntent);
                     finish();
                 }
+                else if (searchResult == "error") {
+                    Toast.makeText(getApplicationContext(), "Connection error occurred. Please contact server admin.", Toast.LENGTH_LONG).show();
+                }
                 else
                     Toast.makeText(getApplicationContext(), "Processing...", Toast.LENGTH_LONG).show();
                 break;

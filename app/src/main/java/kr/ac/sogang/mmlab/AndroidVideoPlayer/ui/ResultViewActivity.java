@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -40,6 +41,7 @@ public class ResultViewActivity extends AppCompatActivity {
     @Nullable private PlayerView playerView;
     private SimpleExoPlayer player;
     private JSONObject searchResult;
+    private TextView textViewResultInfo;
     private ListView listView;
     private ArrayList<ResultItem> resultItemList;
 
@@ -50,6 +52,7 @@ public class ResultViewActivity extends AppCompatActivity {
 
         playerView = findViewById(R.id.result_player_view);
         listView = (ListView) findViewById(R.id.result_player_list);
+        textViewResultInfo = (TextView) findViewById(R.id.text_view_result_info);
 
         player = ExoPlayerFactory.newSimpleInstance(this.getApplicationContext());
 
@@ -62,15 +65,19 @@ public class ResultViewActivity extends AppCompatActivity {
         playerView.setPlayer(player);
 
         resultItemList = new ArrayList<>();
-        String url, video, video_name, thumbnail, name, feature, uploaded_date, updated_date, rank1_video = "";
+        String url, query_id, video, video_name, thumbnail, name, feature, uploaded_date, updated_date, rank1_video = "";
         String[] video_name_tmp;
         JSONObject metadata;
         int topk, window, match_threshold;
         double score_threshold;
         JSONArray results;
+        String result_info;
 
         try {
             url = searchResult.getString("url");
+            Logging.logE("test - " + url);
+            String[] query_id_tmp = url.split("/");
+            query_id = query_id_tmp[query_id_tmp.length - 1];
             video = searchResult.getString("_video");
             video_name_tmp = video.split("/");
             video_name = video_name_tmp[video_name_tmp.length - 1];
@@ -85,6 +92,18 @@ public class ResultViewActivity extends AppCompatActivity {
             uploaded_date = searchResult.getString("uploaded_date");
             updated_date = searchResult.getString("updated_date");
             results = searchResult.getJSONArray("results");
+
+            result_info = new String(
+                    query_id + "\n" +
+                            video_name.replaceAll("_", "") + "\n" +
+                            topk + "\n" +
+                            window + "\n" +
+                            score_threshold + "\n" +
+                            match_threshold + "\n" +
+                            uploaded_date + "\n" +
+                            updated_date
+            );
+            textViewResultInfo.setText(result_info);
 
             for(int i = 0; i < results.length(); i++) {
                 JSONObject result = results.getJSONObject(i);

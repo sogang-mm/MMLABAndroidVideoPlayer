@@ -59,25 +59,36 @@ public class BackgroundWrapper extends Thread{
     }
 
     public void run() {
-        requests = new Requests();
-        final JSONObject result;
-        result = requests.searchVideo(
-                applicationContext.getResources().getString(R.string.search_url),
-                mVideoURL,
-                ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_TOPK, R.integer.DEF_REST_API_TOPK),
-                ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_WINDOW, R.integer.DEF_REST_API_WINDOW),
-                Double.parseDouble(ConfigUtil.getConfigString(applicationContext, ConfigKeys.KEY_REST_API_SCORE_THRESHOLD, R.string.DEF_REST_API_SCORE_THRESHOLD)),
-                ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_MATCH_THRESHOLD, R.integer.DEF_REST_API_MATCH_THRESHOLD));
-
-        searchResult = result.toString();
-
         Handler mHandler = new Handler(Looper.getMainLooper());
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(applicationContext, "Search Complete.", Toast.LENGTH_SHORT).show();
-            }
-        }, 0);
+
+        try {
+            requests = new Requests();
+            final JSONObject result;
+            result = requests.searchVideo(
+                    applicationContext.getResources().getString(R.string.search_url),
+                    mVideoURL,
+                    ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_TOPK, R.integer.DEF_REST_API_TOPK),
+                    ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_WINDOW, R.integer.DEF_REST_API_WINDOW),
+                    Double.parseDouble(ConfigUtil.getConfigString(applicationContext, ConfigKeys.KEY_REST_API_SCORE_THRESHOLD, R.string.DEF_REST_API_SCORE_THRESHOLD)),
+                    ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_MATCH_THRESHOLD, R.integer.DEF_REST_API_MATCH_THRESHOLD));
+
+            searchResult = result.toString();
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(applicationContext, "Search Complete.", Toast.LENGTH_SHORT).show();
+                }
+            }, 0);
+        } catch(Exception e) {
+            searchResult = "error";
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(applicationContext, "Connection error occurred. Please contact server admin.", Toast.LENGTH_SHORT).show();
+                }
+            }, 0);
+        }
     }
     public String getSearchResult() {
         return searchResult;

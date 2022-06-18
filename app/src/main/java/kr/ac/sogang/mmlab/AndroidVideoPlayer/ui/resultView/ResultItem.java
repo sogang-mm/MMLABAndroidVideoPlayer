@@ -22,7 +22,7 @@ public class ResultItem {
     public int getReferenceEnd() {
         return reference_end;
     }
-    public int match() { return match; }
+    public int getMatch() { return match; }
     public double getScore() {
         return score;
     }

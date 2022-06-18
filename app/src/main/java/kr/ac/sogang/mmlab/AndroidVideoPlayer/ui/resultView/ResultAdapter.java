@@ -43,19 +43,20 @@ public class ResultAdapter  extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(layout, parent, false);
         }
-        ResultItem friendsItem = data.get(position);
+        ResultItem resultItem = data.get(position);
 
-//        ImageView thumbnail = (ImageView) convertView.findViewById(R.id.thumbnail);
-//        thumbnail.setImageResource(friendsItem.getThumbnail());
-
-        TextView reference = (TextView) convertView.findViewById(R.id.reference);
-        reference.setText("Rank: " + Integer.toString(friendsItem.getRank()));
-
-//        TextView refrenceSegment = (TextView) convertView.findViewById(R.id.referenceSegment);
-//        refrenceSegment.setText("Segment: " + friendsItem.getReferenceSegment());
-
-        TextView score = (TextView) convertView.findViewById(R.id.score);
-        score.setText("Score: " + Double.toString(friendsItem.getScore()));
+        TextView textViewVideoName = (TextView) convertView.findViewById(R.id.text_view_video_name);
+        TextView textViewRank = (TextView) convertView.findViewById(R.id.text_view_rank);
+        TextView textViewScore = (TextView) convertView.findViewById(R.id.text_view_score);
+        TextView textViewMatch = (TextView) convertView.findViewById(R.id.text_view_match);
+        TextView textViewQuery = (TextView) convertView.findViewById(R.id.text_view_query);
+        TextView textViewReference = (TextView) convertView.findViewById(R.id.text_view_reference);
+        textViewVideoName.setText(resultItem.getVideoName().replace("_", ""));
+        textViewRank.setText(Integer.toString(resultItem.getRank()));
+        textViewScore.setText(Double.toString(resultItem.getScore()));
+        textViewMatch.setText(Integer.toString(resultItem.getMatch()));
+        textViewQuery.setText("(start: " + resultItem.getQueryStart() + " / end: " + resultItem.getQueryEnd() + ")");
+        textViewReference.setText("(start: " + resultItem.getReferenceStart() + " / end: " + resultItem.getReferenceEnd() + ")");
 
         return convertView;
     }
