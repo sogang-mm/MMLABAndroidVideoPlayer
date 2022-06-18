@@ -30,6 +30,14 @@
     <string name="settings_ffmpeg_decode_fps_title">FFmpeg Decode FPS</string>
     <string name="settings_ffmpeg_decode_fps_summary">Number of frames to extract per second when decoding a video.</string>
 
+    <!-- Settings: REST API -->
+    <string name="settings_rest_api_server_url">RESTful API server URL</string>
+    <string name="settings_rest_api_title">RESTful API settings</string>
+    <string name="settings_rest_api_topk">Top K</string>
+    <string name="settings_rest_api_window">Window</string>
+    <string name="settings_rest_api_score_threshold">Score Threshold</string>
+    <string name="settings_rest_api_match_threshold">Match Threshold</string>
+
     <!-- Settings: swipe -->
     <string name="settings_swipe_title">Gestures</string>
     <string name="settings_swipe_enable_title">Enable Swipe Gestures</string>
