@@ -272,7 +272,7 @@ public class FFmpegWrapper extends Thread{
                     final JSONObject result;
                     if ((i+1) == 10) {
                         result = requests.searchFeature(
-                                applicationContext.getResources().getString(R.string.image_search_url),
+                                applicationContext.getResources().getString(R.string.search_url),
                                 featureFilename,
                                 20);
                         try {
@@ -282,7 +282,7 @@ public class FFmpegWrapper extends Thread{
                         }
                     } else {
                         result = requests.searchFeatureUpdate(
-                                applicationContext.getResources().getString(R.string.image_search_url),
+                                applicationContext.getResources().getString(R.string.search_url),
                                 featureFilename, queryId
                                 );
                     }

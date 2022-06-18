@@ -30,7 +30,7 @@ public class ResultAdapter  extends BaseAdapter {
 
     @Override
     public String getItem(int position) {
-        return data.get(position).getReference();
+        return data.get(position).getVideoName();
     }
 
     @Override
@@ -49,13 +49,13 @@ public class ResultAdapter  extends BaseAdapter {
 //        thumbnail.setImageResource(friendsItem.getThumbnail());
 
         TextView reference = (TextView) convertView.findViewById(R.id.reference);
-        reference.setText("Reference: " + friendsItem.getReference());
+        reference.setText("Rank: " + Integer.toString(friendsItem.getRank()));
 
-        TextView refrenceSegment = (TextView) convertView.findViewById(R.id.referenceSegment);
-        refrenceSegment.setText("Segment: " + friendsItem.getReferenceSegment());
+//        TextView refrenceSegment = (TextView) convertView.findViewById(R.id.referenceSegment);
+//        refrenceSegment.setText("Segment: " + friendsItem.getReferenceSegment());
 
         TextView score = (TextView) convertView.findViewById(R.id.score);
-        score.setText("Score: " + friendsItem.getScore());
+        score.setText("Score: " + Double.toString(friendsItem.getScore()));
 
         return convertView;
     }

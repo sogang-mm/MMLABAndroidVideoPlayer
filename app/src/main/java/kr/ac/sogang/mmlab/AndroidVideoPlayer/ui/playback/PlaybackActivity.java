@@ -18,7 +18,8 @@ import kr.ac.sogang.mmlab.AndroidVideoPlayer.feature.playback.VideoPlaybackServi
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.feature.playerview.PlayerScaleType;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.feature.playerview.AVPEPlayerView;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.feature.playerview.AVPPlayerView;
-import kr.ac.sogang.mmlab.AndroidVideoPlayer.filter.FFmpegWrapper;
+//import kr.ac.sogang.mmlab.AndroidVideoPlayer.filter.FFmpegWrapper;
+import kr.ac.sogang.mmlab.AndroidVideoPlayer.filter.BackgroundWrapper;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.AppSettingsActivity;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.ResultViewActivity;
 import kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.playback.views.ControlQuickSettingsButton;
@@ -65,8 +66,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder;
 import com.google.android.exoplayer2.util.Util;
 import com.pnikosis.materialishprogress.ProgressWheel;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 
@@ -285,8 +284,8 @@ public class PlaybackActivity extends AppCompatActivity implements AVPApp.ICrash
          */
         private static final int HIDE_SYSTEM_UI_NAVBAR = 6;
     }
-
-    FFmpegWrapper ffmpegWrapper;
+    BackgroundWrapper backgroundWrapper;
+    // FFmpegWrapper ffmpegWrapper;
 
     /**
      * Shared handler that can be used to invoke methods and/or functions with a delay,
@@ -443,9 +442,15 @@ public class PlaybackActivity extends AppCompatActivity implements AVPApp.ICrash
             finish();
             return;
         } else {
-            ffmpegWrapper = new FFmpegWrapper();
-            ffmpegWrapper.initializeVideo(getApplicationContext(), getVideoURL(playbackUri), ConfigUtil.getConfigInt(getApplicationContext(), ConfigKeys.KEY_FFMPEG_DECODE_FPS, R.integer.DEF_FFMPEG_DECODE_FPS));
-            ffmpegWrapper.start();
+            backgroundWrapper = new BackgroundWrapper();
+            backgroundWrapper.initialize(getApplicationContext(), getVideoURL(playbackUri));
+            backgroundWrapper.start();
+            // ffmpegWrapper = new FFmpegWrapper();
+            // ffmpegWrapper.initializeVideo(
+            //         getApplicationContext(),
+            //         getVideoURL(playbackUri),
+            //         ConfigUtil.getConfigInt(getApplicationContext(), ConfigKeys.KEY_FFMPEG_DECODE_FPS, R.integer.DEF_FFMPEG_DECODE_FPS));
+            // ffmpegWrapper.start();
         }
 
         //get title (in intents EXTRA_TITLE field)
@@ -810,11 +815,12 @@ public class PlaybackActivity extends AppCompatActivity implements AVPApp.ICrash
             }
             case R.id.qs_btn_detection_result:
             {
-                String searchResult = ffmpegWrapper.getSearchResult();
+                String searchResult = backgroundWrapper.getSearchResult();
                 if (searchResult != null) {
                     Intent searchIntent = new Intent(this, ResultViewActivity.class);
                     searchIntent.putExtra("searchResult", searchResult);
                     startActivity(searchIntent);
+                    finish();
                 }
                 else
                     Toast.makeText(getApplicationContext(), "Processing...", Toast.LENGTH_LONG).show();

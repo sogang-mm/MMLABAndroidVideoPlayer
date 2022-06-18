@@ -1,32 +1,44 @@
 package kr.ac.sogang.mmlab.AndroidVideoPlayer.ui.resultView;
 
 public class ResultItem {
-    private int thumbnail;
-    private String reference;
-    private String referenceSegment; // 친구 정보
-    private String score; // 핸드폰 번호
+    private String video;
+    private String video_name;
+    private int rank, query_start, query_end;
+    private int reference_start, reference_end, match;
+    private double score;
 
-    public int getThumbnail() {
-        return thumbnail;
+    public String getVideo() {
+        return video;
     }
-
-    public String getReference() {
-        return reference;
+    public String getVideoName() {
+        return video_name;
     }
-
-    public String getReferenceSegment() {
-        return referenceSegment;
+    public int getRank() { return rank; }
+    public int getQueryStart() { return query_start; }
+    public int getQueryEnd() { return query_end; }
+    public int getReferenceStart() {
+        return reference_start;
     }
-
-    public String getScore() {
+    public int getReferenceEnd() {
+        return reference_end;
+    }
+    public int match() { return match; }
+    public double getScore() {
         return score;
     }
 
 
-    public ResultItem(int thumbnail, String reference, String referenceSegment, String score) {
-        this.thumbnail = thumbnail;
-        this.reference = reference;
-        this.referenceSegment = referenceSegment;
+    public ResultItem(String video, String video_name, int rank, int query_start, int query_end, int reference_start, int reference_end, int match, double score) {
+        this.video = video;
+        this.video_name = video_name;
+        this.rank = rank;
+        this.query_start = query_start;
+        this.query_end = query_end;
+        this.reference_start = reference_start;
+        this.reference_end = reference_end;
+        this.match = match;
         this.score = score;
     }
+
+
 }

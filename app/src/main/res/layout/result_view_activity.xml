@@ -14,7 +14,7 @@
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/result_player_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="300dp" >
 
         </com.google.android.exoplayer2.ui.PlayerView>
 

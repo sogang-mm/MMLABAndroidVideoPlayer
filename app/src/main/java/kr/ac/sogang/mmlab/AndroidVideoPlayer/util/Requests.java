@@ -90,6 +90,63 @@ public class Requests {
         }
     }
 
+    public JSONObject searchVideo(String serverUrl, final String filePath, final int topk, final int window, final double score_threshold, final int match_threshold) {
+        try {
+            @SuppressLint("StaticFieldLeak")
+            AsyncTask<String, Void, HttpResponse> asyncTask = new AsyncTask<String, Void, HttpResponse>() {
+                @Override
+                protected HttpResponse doInBackground(String... url) {
+                    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                    builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+                    builder.addPart("video", new FileBody(new File(filePath)));
+                    try {
+                        builder.addPart("topk", new StringBody(Integer.toString(topk)));
+                        builder.addPart("window", new StringBody(Integer.toString(window)));
+                        builder.addPart("score_threshold", new StringBody(Double.toString(score_threshold)));
+                        builder.addPart("match_threshold",  new StringBody(Integer.toString(match_threshold)));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    HttpClient httpClient = AndroidHttpClient.newInstance("Android");
+                    HttpPost httpPost = new HttpPost(url[0]);
+                    httpPost.setEntity(builder.build());
+                    try {
+                        HttpResponse httpResponse = httpClient.execute(httpPost);
+
+                        return httpResponse;
+                    } catch(NetworkOnMainThreadException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Request fail");
+                        return null;
+                    }catch(IOException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Request fail");
+                        return null;
+                    }
+                }
+            };
+            InputStream inputStream = null;
+
+            HttpResponse response = asyncTask.execute(serverUrl).get();
+            HttpEntity httpEntity = response.getEntity();
+            inputStream = httpEntity.getContent();
+            BufferedReader bufferdReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line = null;
+
+            while ((line = bufferdReader.readLine()) != null) {
+                stringBuilder.append(line + "\n");
+            }
+            inputStream.close();
+            JSONObject jsonResponse = new JSONObject(stringBuilder.toString());
+
+            return jsonResponse;
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
     public JSONObject searchFeature(String strUrl, final String filePath, final int topk) {
         try {
             @SuppressLint("StaticFieldLeak")
