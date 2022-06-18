@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_rest_api_title" />
+
+    <EditTextPreference
+        android:defaultValue="@integer/DEF_REST_API_TOPK"
+        android:key="KEY_REST_API_TOPK"
+        android:title="@string/settings_rest_api_topk" />
+
+    <EditTextPreference
+        android:defaultValue="@integer/DEF_REST_API_WINDOW"
+        android:key="KEY_REST_API_WINDOW"
+        android:title="@string/settings_rest_api_window" />
+
+    <EditTextPreference
+        android:defaultValue="@string/DEF_REST_API_SCORE_THRESHOLD"
+        android:key="KEY_REST_API_SCORE_THRESHOLD"
+        android:title="@string/settings_rest_api_score_threshold" />
+
+    <EditTextPreference
+        android:defaultValue="@integer/DEF_REST_API_MATCH_THRESHOLD"
+        android:key="KEY_REST_API_MATCH_THRESHOLD"
+        android:title="@string/settings_rest_api_match_threshold" />
+
+</PreferenceScreen>

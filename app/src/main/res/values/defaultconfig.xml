@@ -9,7 +9,15 @@
     <bool name="DEF_PERSIST_VOLUME_EN">true</bool>
     <bool name="DEF_BATTERY_WARN_ENABLE">true</bool>
     <integer name="DEF_BATTERY_WARN_THRESHOLD">15</integer>
+
+    <!-- FFmpeg settings -->
     <integer name="DECODE_FPS">1</integer>
+
+    <!-- RESTful API settings-->
+    <integer name="DEF_REST_API_TOPK">100</integer>
+    <integer name="DEF_REST_API_WINDOW">10</integer>
+    <string name="DEF_REST_API_SCORE_THRESHOLD">0.6</string>
+    <integer name="DEF_REST_API_MATCH_THRESHOLD">3</integer>
 
     <!-- swipe settings -->
     <bool name="DEF_SWIPE_GESTURES_EN">true</bool>

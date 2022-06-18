@@ -204,5 +204,13 @@ public final class ConfigKeys
      * FFmpeg
      */
     public static final String KEY_FFMPEG_DECODE_FPS = "FFMPEG_DECODE_FPS";
+
+    /**
+     * REST API
+     */
+    public static final String KEY_REST_API_TOPK = "REST_API_TOPK";
+    public static final String KEY_REST_API_WINDOW = "REST_API_WINDOW";
+    public static final String KEY_REST_API_SCORE_THRESHOLD = "REST_API_SCORE_THRESHOLD";
+    public static final String KEY_REST_API_MATCH_THRESHOLD = "REST_API_MATCH_THRESHOLD";
     //endregion
 }
