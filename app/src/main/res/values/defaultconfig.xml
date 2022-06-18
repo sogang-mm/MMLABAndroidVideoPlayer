@@ -14,6 +14,7 @@
     <integer name="DECODE_FPS">1</integer>
 
     <!-- RESTful API settings-->
+    <string name="DEF_REST_API_SERVER_URL">http://mltigers.sogang.ac.kr:8777/api/query/</string>
     <integer name="DEF_REST_API_TOPK">100</integer>
     <integer name="DEF_REST_API_WINDOW">10</integer>
     <string name="DEF_REST_API_SCORE_THRESHOLD">0.6</string>

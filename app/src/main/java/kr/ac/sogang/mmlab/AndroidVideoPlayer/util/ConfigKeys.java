@@ -208,6 +208,7 @@ public final class ConfigKeys
     /**
      * REST API
      */
+    public static final String KEY_REST_API_SERVER_URL = "REST_API_SERVER_URL";
     public static final String KEY_REST_API_TOPK = "REST_API_TOPK";
     public static final String KEY_REST_API_WINDOW = "REST_API_WINDOW";
     public static final String KEY_REST_API_SCORE_THRESHOLD = "REST_API_SCORE_THRESHOLD";

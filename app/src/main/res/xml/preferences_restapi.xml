@@ -4,6 +4,11 @@
     <PreferenceCategory android:title="@string/settings_rest_api_title" />
 
     <EditTextPreference
+        android:defaultValue="@string/DEF_REST_API_SERVER_URL"
+        android:key="KEY_REST_API_SERVER_URL"
+        android:title="@string/settings_rest_api_server_url" />
+
+    <EditTextPreference
         android:defaultValue="@integer/DEF_REST_API_TOPK"
         android:key="KEY_REST_API_TOPK"
         android:title="@string/settings_rest_api_topk" />

@@ -65,7 +65,7 @@ public class BackgroundWrapper extends Thread{
             requests = new Requests();
             final JSONObject result;
             result = requests.searchVideo(
-                    applicationContext.getResources().getString(R.string.search_url),
+                    ConfigUtil.getConfigString(applicationContext, ConfigKeys.KEY_REST_API_SERVER_URL, R.string.DEF_REST_API_SERVER_URL),
                     mVideoURL,
                     ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_TOPK, R.integer.DEF_REST_API_TOPK),
                     ConfigUtil.getConfigInt(applicationContext, ConfigKeys.KEY_REST_API_WINDOW, R.integer.DEF_REST_API_WINDOW),
