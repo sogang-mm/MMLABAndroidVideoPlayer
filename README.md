@@ -1,4 +1,4 @@
-# MMLabAndroidPlayer
+# MMLabAndroidVideoPlayer
 ## 주요기능
  * 동영상 플레이어
  * 동영상 플레이 중 backgound decoding 및 torchscript 기반 frame feature 추출
